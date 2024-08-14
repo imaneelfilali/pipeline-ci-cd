@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  db:
+    image: fatimazahraerhmaritlemcani132/mysql:v1.0
+    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
+      interval: 3s
+      retries: 5
+      start_period: 30s
+    environment:
+      MYSQL_DATABASE: 'my_database'
+      MYSQL_ROOT_PASSWORD: 'mysql'
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql:/var/lib/mysql
+      - ./entrypoint.sh:/docker-entrypoint-initdb.d/entrypoint.sh
+    networks:
+      - spring-mysql
+
+  backend:
+    image: fatimazahraerhmaritlemcani132/pfa-ci-cd-backend:v1.0
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "9192:9192"
+    volumes:
+      - ./spring-boot-projeect:/app
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/my_database
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: mysql
+    networks:
+      - spring-mysql
+      - react-spring
+
+  frontend:
+    image:  fatimazahraerhmaritlemcani132/frontend-image:v1.0
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - react-spring
+    entrypoint: sh -c "sleep 5; npm start"
+volumes:
+  mysql: {}
+
+networks:
+  react-spring: {}
+  spring-mysql: {}
