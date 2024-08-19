@@ -13,7 +13,7 @@ pipeline {
                 // Checkout the main branch from GitHub
                 git branch: 'main',
                     url: 'https://github.com/fatitlem/Pipeline-CI-CD.git',
-                    credentialsId: 'gitcred'
+                    credentialsId: 'cred'
             }
         }
 
