@@ -30,7 +30,7 @@ services:
     volumes:
       - ./spring-boot-projeect:/app
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/springboot_db
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/my_database
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: mysql
     networks:

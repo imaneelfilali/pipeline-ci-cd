@@ -2,8 +2,9 @@
 # create a db and a table:
 echo "Initializing database..."
 mysql -u root -pmysql <<-EOSQL
-CREATE DATABASE IF NOT EXISTS springboot_db;
-USE springboot_db;
+CREATE DATABASE IF NOT EXISTS mysql -u root -p
+;
+USE my_database;
 CREATE TABLE IF NOT EXISTS student (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
