@@ -1,0 +1,49 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  DOCKER_IMAGE_BACKEND: fatimazahraerhmaritlemcani132/pfa-ci-cd-backend:v1.0
+  DOCKER_IMAGE_FRONTEND: fatimazahraerhmaritlemcani132/frontend-image:v1.0
+  DOCKER_IMAGE_DB: fatimazahraerhmaritlemcani132/mysql:v1.0
+
+jobs:
+  deploy:
+    runs-on: self-hosted # runner on azure
+    name: Deploy to Azure VM
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Pull Docker Images
+        run: |
+          docker pull $DOCKER_IMAGE_FRONTEND
+          docker pull $DOCKER_IMAGE_BACKEND
+          docker pull $DOCKER_IMAGE_DB
+
+      - name: Clean Up Old Containers
+        run: |
+          docker stop frontend-container || true
+          docker rm frontend-container || true
+
+          docker stop backend-container || true
+          docker rm backend-container || true
+
+          docker stop db-container || true
+          docker rm db-container || true
+
+      - name: Deploy Database
+        run: |
+          docker run -d --name db-container $DOCKER_IMAGE_DB
+
+      - name: Deploy Frontend
+        run: |
+          docker run -d --name frontend-container -p 80:80 $DOCKER_IMAGE_FRONTEND
+
+      - name: Deploy Backend
+        run: |
+          docker run -d --name backend-container $DOCKER_IMAGE_BACKEND
